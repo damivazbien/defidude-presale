@@ -1,17 +1,299 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React, {useEffect, useState} from "react";
+import ReactDOM  from "react-dom";
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import {Subtitle, BoxForm, TokensToClaim,FormSwapToken, InputBuyToken, LabelAmount, ButtonSwap, BoxTitleSwap, BinanceLogo, ViewWhitePapper, DivSecondaryHero, DivSecondaryText,ConnectButton, Box, BoxText, BoxTitle, Logo}  from "./styles/global";
+import web3 from './utils/web3';
+import contract from './contract/contract';
+import tokenContract from './contract/token';
+import swapToken from './contract/swapToken';
+import Web3 from 'web3';
+import { useWeb3React, Web3ReactProvider } from "@web3-react/core";
+import { InjectedConnector } from '@web3-react/injected-connector';
+import party from "party-js";
+import CountDown from "./components/countdown";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+
+const injected = new InjectedConnector({
+  supportedChainIds: [1, 3, 4, 5, 42],
+})
+
+const lorem =
+  "Our automated Trading Bots do the heavy lifting for you. $DUDE holders earn passive rewards by simply holding the token.";
+
+const boxData = [
+ 
+  {
+    id: Math.random(),
+    title: "DeFi Dude An innovative passive rewards system",
+    text: lorem,
+    bgColor: "#EDA9A9"
+  }
+];
+
+function getLibrary(provider) {
+    return new Web3(provider)
+  }
+
+
+
+const App = () => {
+    const [walletAddress, setWalletAddress] = useState(null);
+    const [tokenToClaim, setTokenToClaim] = useState(0);
+    const [allowance, setAllowance] = useState(null);
+    const [amountOfTokenForClaim, setAmountOfTokenForClaim] = useState(0);
+    const [value, setValue] = useState('');
+    const [timeOut, setTimeOut] = useState(0);
+    const { active, account, library, connector, activate, deactivate } = useWeb3React();
+    
+    
+    const connect =  async () => {
+        await activate(injected)
+        localStorage.setItem('isWalletConnected', true)
+    }
+
+    const disconnectWallet = async() => {
+        deactivate();
+        localStorage.setItem("isWalletConnected", false);
+        setWalletAddress(null);
+        setTokenToClaim(null);
+        setAllowance(null);
+        
+    }
+
+    const approveToken = async() =>{
+        //pass the amount of tokens of contract
+        await tokenContract.methods.approve("0x34dCaCdBBe6f0DB178B29c47d06494F0DC8250ad", 500000000000000000000000000).send({
+            from: walletAddress
+        });
+    };
+
+    const submitForm = async (e) => {
+        e.preventDefault();
+        
+        await contract.methods.buyTokens(walletAddress).send({
+          from: walletAddress,
+          value: web3.utils.toWei(value, 'ether'),
+        });
+
+        setAmountOfTokenForClaim(await tokenContract.methods.balanceOf(walletAddress).call());  
+    };
+    
+    const claimToken = async (claimToken) => {
+        //pass the amount of tokens of contract
+        await swapToken.methods.swapTokens(claimToken).send({
+            from: walletAddress
+        });
+        party.confetti();
+    }
+
+    const handleChange = event => {
+        const result = event.target.value.replace(/\+|-/g,'');
+        setValue(result);
+    }
+
+    useEffect(() => {
+        if(active){
+            setWalletAddress(account);
+        }
+    }, [active]);
+
+    useEffect(() => {
+        const connectWalletOnPageLoad = async () => {
+          if (localStorage?.getItem('isWalletConnected') === 'true') {
+            try {
+              await activate(injected)
+              localStorage.setItem('isWalletConnected', true)
+              setWalletAddress(account);
+            } catch (ex) {
+              console.log(ex)
+            }
+          }
+        }
+        const getTimeOut = async () => {
+            setTimeOut(await contract.methods.closingTime().call());
+        }
+        connectWalletOnPageLoad();
+        getTimeOut();
+      }, [])
+
+    useEffect(() => {
+        const amountTokenSLP = async() => {
+            setTokenToClaim(await swapToken.methods.calculateTokens(amountOfTokenForClaim).call());
+        }
+        const tokensToClaim = async () => {
+            if(walletAddress === null)
+            {
+                return 0;
+            }
+            //pass the amount of tokens of contract
+            setAmountOfTokenForClaim(await tokenContract.methods.balanceOf(walletAddress).call());  
+        }
+        const haveAllowance = async () => {
+            setAllowance(await tokenContract.methods.allowance(walletAddress, "0x34dCaCdBBe6f0DB178B29c47d06494F0DC8250ad").call());  
+        }
+        
+        if(walletAddress !== null)
+        {
+            tokensToClaim();
+            haveAllowance();
+            amountTokenSLP();
+        }
+        else
+        {
+            setWalletAddress(null);
+            setAllowance(null);
+            setTokenToClaim(null);
+        }
+    },[walletAddress, amountOfTokenForClaim]);
+
+    
+
+    return (
+            <Container fuid="md">
+                    <br></br>
+                    <Row>
+                        <Col></Col>
+                        <Col md={2}>
+                            {
+                                walletAddress === null ? 
+                                    <ConnectButton onClick={ connect }>Connect wallet</ConnectButton>
+                                : 
+                                    <ConnectButton onClick={ disconnectWallet }>Logout</ConnectButton>         
+                            }
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md={6}>
+                            <Box>
+                                <Row>
+                                    <BoxTitle>{boxData[0].title}</BoxTitle>
+                                </Row>
+                                <Row>
+                                    <BoxText>{boxData[0].text}</BoxText>
+                                </Row>
+                                <Row>
+                                    <Logo></Logo>
+                                </Row>
+                                <br></br>
+                                <br></br>
+                                <Row>
+                                    <Col md={6}>
+                                        <ViewWhitePapper href="https://assets.website-files.com/624b9f6b660c8a01c2fbd34d/6273a5844c0c09798d2573fb_Defi_Dude_DAO_WP_Latest.pdf" target="_blank">
+                                            <DivSecondaryHero>
+                                                <DivSecondaryText>
+                                                    View Our White Papper
+                                                </DivSecondaryText>
+                                            </DivSecondaryHero> 
+                                        </ViewWhitePapper>
+                                    </Col>
+                                    <Col md={6}>
+                                        <Subtitle>Powered by</Subtitle>
+                                        <BinanceLogo  src="https://assets.website-files.com/624b9f6b660c8a01c2fbd34d/629edfa9441bbb8cebfafcaa_binance-smart-chain-logo-802A74A1DB-seeklogo.com.png"></BinanceLogo>
+                                    </Col>
+                                </Row>
+                            </Box>
+                        </Col>
+                        <Col md={6}>
+                            <BoxForm>
+                                {
+                                    (timeOut>0)?
+                                    <Row>
+                                        <CountDown toend={timeOut * 1000}></CountDown>
+                                    </Row>:<></>
+                                }   
+                                <Row>
+                                        <Row>
+                                            <Col>
+                                                <BoxTitleSwap>Buy tokens</BoxTitleSwap>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <FormSwapToken onSubmit={submitForm}>
+                                                    <Container fluid>
+                                                        <Row>
+                                                            <Col></Col>
+                                                            <Col>
+                                                                <LabelAmount>Number</LabelAmount>
+                                                            </Col>
+                                                            <Col></Col>
+                                                        </Row>
+                                                        <Row>
+                                                            <Col md={12}>
+                                                                <InputBuyToken value={value} type='number' onChange={handleChange} ></InputBuyToken>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row>
+                                                            <Col></Col>
+                                                            <Col xs={{order:12}}>
+                                                                <ButtonSwap type="submit">
+                                                                    <DivSecondaryHero>
+                                                                        <DivSecondaryText>
+                                                                            Swap
+                                                                        </DivSecondaryText>
+                                                                    </DivSecondaryHero>
+                                                                </ButtonSwap>
+                                                            </Col>
+                                                            <Col></Col>
+                                                        </Row>
+                                                    </Container>
+                                            </FormSwapToken>    
+                                        </Row>
+                                    
+                                </Row>
+                                <Row>
+                                    
+                                        {
+                                            allowance === 0 ?
+                                                    <Row>
+                                                        <Col md={{span: 4, offset: 4}}>
+                                                        <ButtonSwap onClick={approveToken}>
+                                                            <DivSecondaryHero>
+                                                                <DivSecondaryText>
+                                                                    approve                                                               
+                                                                </DivSecondaryText>
+                                                            </DivSecondaryHero>
+                                                        </ButtonSwap>
+                                                        </Col>
+                                                    </Row>
+                                                    
+                                            :
+                                                tokenToClaim > 0 ?
+                                                    <Container fluid>
+                                                        <Row>
+                                                            <TokensToClaim>You have {web3.utils.fromWei(tokenToClaim, 'ether')} for claim</TokensToClaim>
+                                                        </Row>
+                                                        <Row>
+                                                            <Col></Col>
+                                                            <Col>
+                                                                <ButtonSwap onClick={() => claimToken(amountOfTokenForClaim)}>
+                                                                    <DivSecondaryHero>
+                                                                            <DivSecondaryText>
+                                                                                Claim
+                                                                        </DivSecondaryText>
+                                                                    </DivSecondaryHero>
+                                                                </ButtonSwap>
+                                                            </Col>
+                                                            <Col></Col>
+                                                        </Row>
+                                                    </Container>
+                                                :
+                                                <Row><Col></Col></Row>
+                                        }
+                                    
+                                </Row>
+                            </BoxForm>
+                        </Col>
+                    </Row>
+            </Container>
+    )
+}
+
+ReactDOM.render(
+    <Web3ReactProvider getLibrary={getLibrary}>
+        <App/>
+    </Web3ReactProvider>
+
+, document.querySelector("#root"))
