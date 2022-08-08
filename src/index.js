@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import ReactDOM  from "react-dom";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -13,7 +13,7 @@ import { useWeb3React, Web3ReactProvider } from "@web3-react/core";
 import { InjectedConnector } from '@web3-react/injected-connector';
 import party from "party-js";
 import CountDown from "./components/countdown";
-
+import { SpinnerInfinity } from 'spinners-react';
 
 
 const injected = new InjectedConnector({
@@ -41,12 +41,14 @@ function getLibrary(provider) {
 
 const App = () => {
     const [walletAddress, setWalletAddress] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [tokenToClaim, setTokenToClaim] = useState(0);
     const [allowance, setAllowance] = useState(null);
     const [amountOfTokenForClaim, setAmountOfTokenForClaim] = useState(0);
     const [value, setValue] = useState('');
     const [timeOut, setTimeOut] = useState(0);
     const { active, account, library, connector, activate, deactivate } = useWeb3React();
+    const buttonRef = useRef(null);
     
     
     const connect =  async () => {
@@ -64,29 +66,60 @@ const App = () => {
     }
 
     const approveToken = async() =>{
-        //pass the amount of tokens of contract
-        await tokenContract.methods.approve("0x34dCaCdBBe6f0DB178B29c47d06494F0DC8250ad", 500000000000000000000000000).send({
-            from: walletAddress
-        });
+        setLoading(true);
+        buttonRef.current.disabled = true;
+        try{
+            //pass the amount of tokens of contract
+            await tokenContract.methods.approve("0x34dCaCdBBe6f0DB178B29c47d06494F0DC8250ad", 500000000000000000000000000).send({
+                from: walletAddress
+            });
+            setLoading(false);
+            buttonRef.current.disabled = false;
+        }catch(err){
+            setLoading(false);
+            buttonRef.current.disabled = false;
+        }
     };
 
     const submitForm = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        buttonRef.current.disabled = true;
+        try{
+            await contract.methods.buyTokens(walletAddress).send({
+                from: walletAddress,
+                value: web3.utils.toWei(value, 'ether'),
+              });
+      
+              setAmountOfTokenForClaim(await tokenContract.methods.balanceOf(walletAddress).call());  
+              setLoading(false);
+              buttonRef.current.disabled = false;
+        }catch(err){
+            setLoading(false);
+            buttonRef.current.disabled = false;
+        }
         
-        await contract.methods.buyTokens(walletAddress).send({
-          from: walletAddress,
-          value: web3.utils.toWei(value, 'ether'),
-        });
-
-        setAmountOfTokenForClaim(await tokenContract.methods.balanceOf(walletAddress).call());  
     };
     
     const claimToken = async (claimToken) => {
-        //pass the amount of tokens of contract
-        await swapToken.methods.swapTokens(claimToken).send({
-            from: walletAddress
-        });
-        party.confetti();
+        setLoading(true);
+        buttonRef.current.disabled = true;
+        try{
+            //pass the amount of tokens of contract
+            await swapToken.methods.swapTokens(claimToken).send({
+                from: walletAddress
+            });
+            
+            party.confetti(document.body,{
+                count: party.variation.range(100, 200),
+            });
+            setAmountOfTokenForClaim(await tokenContract.methods.balanceOf(walletAddress).call());
+            setLoading(false);
+            buttonRef.current.disabled = false;
+      }catch(err){
+          setLoading(false);
+          buttonRef.current.disabled = false;
+      }
     }
 
     const handleChange = event => {
@@ -228,10 +261,15 @@ const App = () => {
                                                         <Row>
                                                             <Col></Col>
                                                             <Col xs={{order:12}}>
-                                                                <ButtonSwap type="submit">
+                                                                <ButtonSwap type="submit" ref={buttonRef}>
                                                                     <DivSecondaryHero>
                                                                         <DivSecondaryText>
-                                                                            Swap
+                                                                            {
+                                                                                (loading)?
+                                                                                    <SpinnerInfinity  size={30} thickness={170} speed={96} color="rgba(57, 172, 68, 0.97)" secondaryColor="rgba(57, 135, 172, 0.86)" enabled={loading} />
+                                                                                :
+                                                                                <>Swap</>
+                                                                            }
                                                                         </DivSecondaryText>
                                                                     </DivSecondaryHero>
                                                                 </ButtonSwap>
@@ -249,10 +287,16 @@ const App = () => {
                                             allowance === 0 ?
                                                     <Row>
                                                         <Col md={{span: 4, offset: 4}}>
-                                                        <ButtonSwap onClick={approveToken}>
+                                                        <ButtonSwap onClick={approveToken} ref={buttonRef}>
                                                             <DivSecondaryHero>
                                                                 <DivSecondaryText>
-                                                                    approve                                                               
+                                                                    {
+                                                                                (loading)?
+                                                                                    <SpinnerInfinity  size={30} thickness={170} speed={96} color="rgba(57, 172, 68, 0.97)" secondaryColor="rgba(57, 135, 172, 0.86)" enabled={loading} />
+                                                                                :
+                                                                                <>Approve</>
+                                                                            }
+                                                                                                                                   
                                                                 </DivSecondaryText>
                                                             </DivSecondaryHero>
                                                         </ButtonSwap>
@@ -268,10 +312,16 @@ const App = () => {
                                                         <Row>
                                                             <Col></Col>
                                                             <Col>
-                                                                <ButtonSwap onClick={() => claimToken(amountOfTokenForClaim)}>
+                                                                <ButtonSwap ref={buttonRef} onClick={() => claimToken(amountOfTokenForClaim)}>
                                                                     <DivSecondaryHero>
                                                                             <DivSecondaryText>
-                                                                                Claim
+                                                                            {
+                                                                                (loading)?
+                                                                                    <SpinnerInfinity  size={30} thickness={170} speed={96} color="rgba(57, 172, 68, 0.97)" secondaryColor="rgba(57, 135, 172, 0.86)" enabled={loading} />
+                                                                                :
+                                                                                <>Claim</>
+                                                                            }
+                                                                                
                                                                         </DivSecondaryText>
                                                                     </DivSecondaryHero>
                                                                 </ButtonSwap>
