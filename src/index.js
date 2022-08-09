@@ -70,11 +70,13 @@ const App = () => {
         buttonRef.current.disabled = true;
         try{
             //pass the amount of tokens of contract
-            await tokenContract.methods.approve("0x34dCaCdBBe6f0DB178B29c47d06494F0DC8250ad", 500000000000000000000000000).send({
+            await tokenContract.methods.approve("0x34dCaCdBBe6f0DB178B29c47d06494F0DC8250ad", "500000000000000000000000000").send({
                 from: walletAddress
             });
             setLoading(false);
             buttonRef.current.disabled = false;
+            setAllowance(await tokenContract.methods.allowance(walletAddress, "0x34dCaCdBBe6f0DB178B29c47d06494F0DC8250ad").call());  
+
         }catch(err){
             setLoading(false);
             buttonRef.current.disabled = false;
@@ -180,9 +182,7 @@ const App = () => {
             setAllowance(null);
             setTokenToClaim(null);
         }
-    },[walletAddress, amountOfTokenForClaim]);
-
-    
+    },[walletAddress, amountOfTokenForClaim, allowance]);
 
     return (
             <Container fuid="md">
@@ -245,7 +245,6 @@ const App = () => {
                                         </Row>
                                         <Row>
                                             <FormSwapToken onSubmit={submitForm}>
-                                                    <Container fluid>
                                                         <Row>
                                                             <Col></Col>
                                                             <Col>
@@ -276,7 +275,7 @@ const App = () => {
                                                             </Col>
                                                             <Col></Col>
                                                         </Row>
-                                                    </Container>
+                                                    
                                             </FormSwapToken>    
                                         </Row>
                                     
@@ -284,34 +283,36 @@ const App = () => {
                                 <Row>
                                     
                                         {
-                                            allowance === 0 ?
+                                            allowance == 0 && amountOfTokenForClaim > 0 ?
                                                     <Row>
-                                                        <Col md={{span: 4, offset: 4}}>
-                                                        <ButtonSwap onClick={approveToken} ref={buttonRef}>
-                                                            <DivSecondaryHero>
-                                                                <DivSecondaryText>
-                                                                    {
-                                                                                (loading)?
-                                                                                    <SpinnerInfinity  size={30} thickness={170} speed={96} color="rgba(57, 172, 68, 0.97)" secondaryColor="rgba(57, 135, 172, 0.86)" enabled={loading} />
-                                                                                :
-                                                                                <>Approve</>
-                                                                            }
-                                                                                                                                   
-                                                                </DivSecondaryText>
-                                                            </DivSecondaryHero>
-                                                        </ButtonSwap>
+                                                        <Col></Col>
+                                                        <Col xs={{order:12}}>
+                                                            <ButtonSwap onClick={approveToken} ref={buttonRef}>
+                                                                <DivSecondaryHero>
+                                                                    <DivSecondaryText>
+                                                                        {
+                                                                                    (loading)?
+                                                                                        <SpinnerInfinity  size={30} thickness={170} speed={96} color="rgba(57, 172, 68, 0.97)" secondaryColor="rgba(57, 135, 172, 0.86)" enabled={loading} />
+                                                                                    :
+                                                                                    <>Approve</>
+                                                                                }
+                                                                                                                                    
+                                                                    </DivSecondaryText>
+                                                                </DivSecondaryHero>
+                                                            </ButtonSwap>
                                                         </Col>
+                                                        <Col></Col>
                                                     </Row>
                                                     
                                             :
                                                 tokenToClaim > 0 ?
-                                                    <Container fluid>
+                                                    <>
                                                         <Row>
                                                             <TokensToClaim>You have {web3.utils.fromWei(tokenToClaim, 'ether')} for claim</TokensToClaim>
                                                         </Row>
                                                         <Row>
                                                             <Col></Col>
-                                                            <Col>
+                                                            <Col xs={{order:12}}>
                                                                 <ButtonSwap ref={buttonRef} onClick={() => claimToken(amountOfTokenForClaim)}>
                                                                     <DivSecondaryHero>
                                                                             <DivSecondaryText>
@@ -328,7 +329,7 @@ const App = () => {
                                                             </Col>
                                                             <Col></Col>
                                                         </Row>
-                                                    </Container>
+                                                    </>
                                                 :
                                                 <Row><Col></Col></Row>
                                         }
