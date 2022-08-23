@@ -169,6 +169,7 @@ export const BoxDetailSales = styled.li`
 export const BoxText = styled.div`
   margin-top: ${px2vw(10)};
   color: hsla(0,0%,100%,.75);
+  margin-left:7%;
   font-size: 1.2rem;
   line-height:1.4;
   letter-spacing: 1.5px;
@@ -182,6 +183,7 @@ export const BoxText = styled.div`
   @media(max-width:460px){
     font-size: 1rem;
     padding: 5%;
+    margin-left:0;
   }
 `;
 
