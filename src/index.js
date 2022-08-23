@@ -3,7 +3,8 @@ import ReactDOM  from "react-dom";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import {Subtitle, BoxForm, TokensToClaim,FormSwapToken, InputBuyToken, LabelAmount, ButtonSwap, BoxTitleSwap, BinanceLogo, ViewWhitePapper, DivSecondaryHero, DivSecondaryText,ConnectButton, Box, BoxText, BoxTitle, Logo}  from "./styles/global";
+import {Subtitle, BoxForm, BoxSubTitle, BoxDetailSales, TokensToClaim,FormSwapToken, InputBuyToken, LabelAmount, ButtonSwap, BoxTitleSwap, BinanceLogo, 
+    ViewWhitePapper, DivSecondaryHero, DivSecondaryText,ConnectButton, Box, BoxText, BoxTitle, Logo, Note, Ol}  from "./styles/global";
 import web3 from './utils/web3';
 import contract from './contract/contract';
 import tokenContract from './contract/token';
@@ -21,17 +22,23 @@ const injected = new InjectedConnector({
 })
 
 const lorem =
-  "Our automated Trading Bots do the heavy lifting for you. $DUDE holders earn passive rewards by simply holding the token.";
+  "Our automated Trading Bots do the heavy lifting for you. Simply hold $DUDE token to earn periodic rewards.";
 
-const boxData = [
- 
+const boxData = 
   {
     id: Math.random(),
-    title: "DeFi Dude An innovative passive rewards system",
+    title: "DUDE TOKEN",
+    subtitle: "Earn rewards by holding",
     text: lorem,
     bgColor: "#EDA9A9"
-  }
-];
+  };
+
+const boxDataSales = {
+    title: "HOW TO PARTICIPATE",
+    position: ["Enter swap amount (0.0002 ETH = 100 DUDE)","Click swap","Click claim to claim BnB/DUDE LP tokens"],
+    note: "Participation in this Liquid Generation Event gives a +170% bonus to your starting amount. E.g. ETH swapped = 0.0002 ETH & 100 DUDE tokens LP tokens"
+
+} 
 
 function getLibrary(provider) {
     return new Web3(provider)
@@ -148,6 +155,7 @@ const App = () => {
           }
         }
         const getTimeOut = async () => {
+            console.log(await contract.methods.closingTime().call());
             setTimeOut(await contract.methods.closingTime().call());
         }
         connectWalletOnPageLoad();
@@ -186,7 +194,6 @@ const App = () => {
 
     return (
             <Container fuid="md">
-                    <br></br>
                     <Row>
                         <Col></Col>
                         <Col md={2}>
@@ -198,22 +205,31 @@ const App = () => {
                             }
                         </Col>
                     </Row>
+                    <br></br>
+                    <br></br>
+                    <br></br>
                     <Row>
-                        <Col md={6}>
+                        <Col md={5}>
                             <Box>
                                 <Row>
-                                    <BoxTitle>{boxData[0].title}</BoxTitle>
+                                    <BoxTitle>{boxData.title}</BoxTitle>
                                 </Row>
                                 <Row>
-                                    <BoxText>{boxData[0].text}</BoxText>
+                                    <BoxSubTitle>{boxData.subtitle}</BoxSubTitle>
                                 </Row>
                                 <Row>
-                                    <Logo></Logo>
+                                    <BoxText>{boxData.text}</BoxText>
+                                </Row>
+                                <Row>
+                                    <Col></Col>
+                                    <Col><Logo></Logo></Col>
+                                    <Col></Col>
                                 </Row>
                                 <br></br>
                                 <br></br>
                                 <Row>
-                                    <Col md={6}>
+                                    <Col></Col>
+                                    <Col md={5}>
                                         <ViewWhitePapper href="https://assets.website-files.com/624b9f6b660c8a01c2fbd34d/6273a5844c0c09798d2573fb_Defi_Dude_DAO_WP_Latest.pdf" target="_blank">
                                             <DivSecondaryHero>
                                                 <DivSecondaryText>
@@ -222,120 +238,133 @@ const App = () => {
                                             </DivSecondaryHero> 
                                         </ViewWhitePapper>
                                     </Col>
-                                    <Col md={6}>
+                                    <Col md={5}>
                                         <Subtitle>Powered by</Subtitle>
                                         <BinanceLogo  src="https://assets.website-files.com/624b9f6b660c8a01c2fbd34d/629edfa9441bbb8cebfafcaa_binance-smart-chain-logo-802A74A1DB-seeklogo.com.png"></BinanceLogo>
                                     </Col>
+                                    <Col></Col>
                                 </Row>
                             </Box>
                         </Col>
-                        <Col md={6}>
-                            <BoxForm>
-                                {
-                                    (timeOut>0)?
+                        <Col md={2}></Col>
+                        <Col md={5}>
+                            <Row>
+                                <Box>
                                     <Row>
-                                        <CountDown toend={timeOut * 1000}></CountDown>
-                                    </Row>:<></>
-                                }   
-                                <Row>
+                                        <BoxTitle>{boxDataSales.title}</BoxTitle>
+                                    </Row>
+                                    <Row>
+                                        <Ol>
+                                            {
+                                                boxDataSales.position.map((step) =>(
+                                                    <BoxDetailSales key={step}>
+                                                        {step}
+                                                    </BoxDetailSales>
+                                                ))
+                                            }
+                                        </Ol>
+                                    </Row>
+                                </Box>
+                            </Row>
+                            <Row>
+                                <BoxForm>
+                                    {
+                                        (timeOut>0)?
                                         <Row>
-                                            <Col>
-                                                <BoxTitleSwap>Buy tokens</BoxTitleSwap>
-                                            </Col>
-                                        </Row>
+                                            <CountDown toend={timeOut * 1000}></CountDown>
+                                        </Row>:<></>
+                                    }   
                                         <Row>
-                                            <FormSwapToken onSubmit={submitForm}>
-                                                        <Row>
-                                                            <Col></Col>
-                                                            <Col>
+                                            <Row>
+                                                <Col>
+                                                    <BoxTitleSwap>Buy tokens</BoxTitleSwap>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <FormSwapToken onSubmit={submitForm}>
+                                                            <Row>
                                                                 <LabelAmount>Number</LabelAmount>
-                                                            </Col>
-                                                            <Col></Col>
-                                                        </Row>
-                                                        <Row>
-                                                            <Col md={12}>
+                                                            </Row>
+                                                            <Row>
                                                                 <InputBuyToken value={value} type='number' onChange={handleChange} ></InputBuyToken>
-                                                            </Col>
-                                                        </Row>
-                                                        <Row>
-                                                            <Col></Col>
-                                                            <Col xs={{order:12}}>
-                                                                <ButtonSwap type="submit" ref={buttonRef}>
-                                                                    <DivSecondaryHero>
-                                                                        <DivSecondaryText>
-                                                                            {
-                                                                                (loading)?
-                                                                                    <SpinnerInfinity  size={30} thickness={170} speed={96} color="rgba(57, 172, 68, 0.97)" secondaryColor="rgba(57, 135, 172, 0.86)" enabled={loading} />
-                                                                                :
-                                                                                <>Swap</>
-                                                                            }
-                                                                        </DivSecondaryText>
-                                                                    </DivSecondaryHero>
-                                                                </ButtonSwap>
-                                                            </Col>
-                                                            <Col></Col>
-                                                        </Row>
-                                                    
-                                            </FormSwapToken>    
-                                        </Row>
-                                    
-                                </Row>
-                                <Row>
-                                    
-                                        {
-                                            allowance == 0 && amountOfTokenForClaim > 0 ?
-                                                    <Row>
-                                                        <Col></Col>
-                                                        <Col xs={{order:12}}>
-                                                            <ButtonSwap onClick={approveToken} ref={buttonRef}>
-                                                                <DivSecondaryHero>
-                                                                    <DivSecondaryText>
-                                                                        {
+                                                            </Row>
+                                                            <Row>
+                                                                <div style={{"textAlign":"center"}}>
+                                                                    <ButtonSwap type="submit" ref={buttonRef}>
+                                                                        <DivSecondaryHero>
+                                                                            <DivSecondaryText>
+                                                                                {
                                                                                     (loading)?
                                                                                         <SpinnerInfinity  size={30} thickness={170} speed={96} color="rgba(57, 172, 68, 0.97)" secondaryColor="rgba(57, 135, 172, 0.86)" enabled={loading} />
                                                                                     :
-                                                                                    <>Approve</>
+                                                                                    <>Swap</>
                                                                                 }
-                                                                                                                                    
-                                                                    </DivSecondaryText>
-                                                                </DivSecondaryHero>
-                                                            </ButtonSwap>
-                                                        </Col>
-                                                        <Col></Col>
-                                                    </Row>
-                                                    
-                                            :
-                                                tokenToClaim > 0 ?
-                                                    <>
+                                                                            </DivSecondaryText>
+                                                                        </DivSecondaryHero>
+                                                                    </ButtonSwap>
+                                                                </div>
+                                                            </Row>
+                                                        
+                                                </FormSwapToken>    
+                                            </Row>
+                                        
+                                        </Row>
+                                        <Row>
+                                        
+                                            {
+                                                allowance == 0 && amountOfTokenForClaim > 0 ?
                                                         <Row>
-                                                            <TokensToClaim>You have {web3.utils.fromWei(tokenToClaim, 'ether')} for claim</TokensToClaim>
-                                                        </Row>
-                                                        <Row>
-                                                            <Col></Col>
-                                                            <Col xs={{order:12}}>
-                                                                <ButtonSwap ref={buttonRef} onClick={() => claimToken(amountOfTokenForClaim)}>
-                                                                    <DivSecondaryHero>
+                                                            <div  style={{"textAlign":"center"}}>
+                                                                <ButtonSwap onClick={approveToken} ref={buttonRef}>
+                                                                        <DivSecondaryHero>
                                                                             <DivSecondaryText>
-                                                                            {
-                                                                                (loading)?
-                                                                                    <SpinnerInfinity  size={30} thickness={170} speed={96} color="rgba(57, 172, 68, 0.97)" secondaryColor="rgba(57, 135, 172, 0.86)" enabled={loading} />
-                                                                                :
-                                                                                <>Claim</>
-                                                                            }
-                                                                                
-                                                                        </DivSecondaryText>
-                                                                    </DivSecondaryHero>
+                                                                                {
+                                                                                            (loading)?
+                                                                                                <SpinnerInfinity  size={30} thickness={170} speed={96} color="rgba(57, 172, 68, 0.97)" secondaryColor="rgba(57, 135, 172, 0.86)" enabled={loading} />
+                                                                                            :
+                                                                                            <>Approve</>
+                                                                                        }
+                                                                                                                                            
+                                                                            </DivSecondaryText>
+                                                                        </DivSecondaryHero>
                                                                 </ButtonSwap>
-                                                            </Col>
-                                                            <Col></Col>
+                                                            </div>
                                                         </Row>
-                                                    </>
+                                                        
                                                 :
-                                                <Row><Col></Col></Row>
-                                        }
-                                    
-                                </Row>
-                            </BoxForm>
+                                                    tokenToClaim > 0 ?
+                                                        <>
+                                                            <Row>
+                                                                <TokensToClaim>You have {web3.utils.fromWei(tokenToClaim, 'ether')} for claim</TokensToClaim>
+                                                            </Row>
+                                                            <Row>
+                                                                <div style={{"textAlign":"center"}}>
+                                                                    <ButtonSwap ref={buttonRef} onClick={() => claimToken(amountOfTokenForClaim)}>
+                                                                        <DivSecondaryHero>
+                                                                                <DivSecondaryText>
+                                                                                {
+                                                                                    (loading)?
+                                                                                        <SpinnerInfinity  size={30} thickness={170} speed={96} color="rgba(57, 172, 68, 0.97)" secondaryColor="rgba(57, 135, 172, 0.86)" enabled={loading} />
+                                                                                    :
+                                                                                    <>Claim</>
+                                                                                }
+                                                                                    
+                                                                            </DivSecondaryText>
+                                                                        </DivSecondaryHero>
+                                                                    </ButtonSwap>                        
+                                                                </div>
+                                                            </Row>
+                                                        </>
+                                                    :
+                                                    <Row><Col></Col></Row>
+                                            }
+                                        
+                                        </Row>
+                                    </BoxForm>
+                            </Row>
+                            <Row>
+                                <Note>{boxDataSales.note}</Note>
+                            </Row>
                         </Col>
                     </Row>
             </Container>

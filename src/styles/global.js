@@ -51,6 +51,10 @@ export const Logo = styled.div`
     animation-duration: 3s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+  
     
     @media (max-width: 768px) {
       width: ${px2vw(1400)};
@@ -65,68 +69,119 @@ export const Logo = styled.div`
 
 export const Box = styled.div`
   display: flex;
-  
-  min-height: ${px2vw(200, 320)};
   flex-direction: column;
-  padding: ${px2vw(20)};
-  margin: ${px2vw(20)};
   background-color: ${props => props.bgColor};
-  height: 60%;
   margin-top:10%;
 
 
   @media (min-width: 768px) {
     width: ${px2vw(320, 768)};
-    min-height: ${px2vw(200, 768)};
-    height: 60%;
   }
 
   @media (min-width: 1024px) {
     width: ${px2vw(500)};
-    min-height: ${px2vw(300)};
-    height: 60%;
+    
   }
 `;
 
-export const BoxTitle = styled.h3`
+
+
+
+export const BoxTitle = styled.div`
   color: #fff;
-  font-size: 3.2rem;
+  font-size: 2.2rem;
   font-family: Inter,sans-serif;
   line-height:1.2;
-  
+  text-align: center;
   font-weight:600;
-  letter-spacing: -3.5px;
   
 
-  @media (min-width: 1024px) {
-    font-size: 2.7rem;
-  }
-  @media(min-width:300px){
+
+  @media(max-width:400px){
     font-size: 2.5rem;
     margin-top: 10px;
   }
 `;
 
-export const BoxText = styled.p`
-  margin-top: ${px2vw(10)};
+export const BoxSubTitle = styled.div`
+  color: #fff;
+  font-size: 3rem;
+  font-family: Inter,sans-serif;
+  line-height:1.2;
+  text-align: center;
+  font-weight:600;
+  
 
+  @media (max-width: 1024px) {
+    font-size: 2.7rem;
+  }
+  @media(max-width:400px){
+    font-size: 2em;
+    margin-top: 10px;
+  }
+`;
+
+export const Note = styled.p`
+  font-size: 1.3rem;
+  font-family: Inter,sans-serif;
+  color: #f3d81bf7;
+  font-weight:600;
+  line-height:1.2;
+
+  @media (min-width: 1024px) {
+    font-size: 1rem;
+  }
+  @media(max-width:460px){
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+`;
+
+export const Ol = styled.ol`
+  margin-left:25%; 
+  margin-right:25%; 
+  padding-right:0;
+
+  @media(max-width:460px){
+    margin-left:5%; 
+    margin-right:5%; 
+    padding-right:0;
+  }
+`;
+
+export const BoxDetailSales = styled.li`
+  font-size: 1rem;
+  font-family: Inter,sans-serif;
+  color: #f3d81bf7;
+  font-weight:600;
+  line-height:1.2;
+  
+
+  @media (min-width: 1024px) {
+    font-size: 1rem;
+  }
+  @media(max-width:460px){
+    font-size: 0.9rem;
+    margin-top: 10px;
+  }
+`;
+
+export const BoxText = styled.div`
+  margin-top: ${px2vw(10)};
+  color: hsla(0,0%,100%,.75);
+  font-size: 1.2rem;
+  line-height:1.4;
+  letter-spacing: 1.5px;
   opacity: 1;
   transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
   transform-style: preserve-3d;
 
-  
-  color: hsla(0,0%,100%,.75);
-  font-size: 1rem;
-  line-height:1.4;
-  letter-spacing:1px;
-  
   @media (min-width: 1024px) {
-    font-size: 1rem;
-    max-width:32rem;
+    font-size: 1.2rem;
   }
-  @media(min-width:300px){
-    margin-right: 29px;
-    
+  @media(max-width:460px){
+    font-size: 1rem;
+    padding: 5%;
   }
 `;
 
@@ -140,7 +195,8 @@ export const BoxExchange = styled.div`
   height: 100%;
   border-color: linear-gradient(135deg,#ab69ff,#14c4dc 67%,#14c4dc 0,#00fc9a);
   border-style: solid;
-
+  content-align: center;
+  
 
   @media (min-width: 768px) {
     width: ${px2vw(320, 768)};
@@ -164,6 +220,7 @@ export const BoxTitleSwap = styled.h3`
   font-weight:600;
   text-align:center;
   padding: 1.5%;
+  
   
   @media (min-width: 1024px) {
     font-size: 2.7rem;
@@ -219,7 +276,6 @@ export const ConnectButton = styled.button`
   font-size: 1rem;
   font-weight: 700;
   text-align: center;
-
   @media (max-width: 460px) {
     width:43%;
     display: center;
@@ -307,10 +363,8 @@ export const BinanceLogo = styled.img`
 `;
 
 export const ButtonSwap = styled.button`
-    margin-top: 15%;
+    margin-top: 2%;
     padding: 2px;
-    justify-content: flex-end;
-    align-items:center;
     border-radius: 30px;
     background-image: linear-gradient(135deg,#00fc9a,#29debd 34%,#14c4dc 67%,#ab69ff);
     transition: backgroud-color 1s,.2s;
@@ -319,8 +373,9 @@ export const ButtonSwap = styled.button`
     font-size: inherit;
     background-color: transparent;
     text-decoration: inherit;
-    max-width: 100%;
-    display: inline-block;
+    width: 30%;
+    
+    
     
     &:-webkit-any-link {
       cursor: pointer;
@@ -341,11 +396,11 @@ export const LabelAmount = styled.label`
     font-family: Inter,sans-serif;
     line-height:1.2;
     font-weight:600;
+    text-align: center;
     
 
-    @media(max-width:300px){
+    @media(max-width:460px){
       font-size: 1.5rem; 
-      margin-left:30%;
     }
 `;
 
@@ -364,10 +419,9 @@ export const BoxForm = styled.div`
   border-color: linear-gradient(orange, violet);
   border-radius: 30px;
   background-clip: padding-box;
-  padding: ${px2vw(20)};
   margin: ${px2vw(10)};
-  margin-top: ${px2vw(120)};
-  padding: ${px2vw(60)};
+  
+  padding: ${px2vw(25)};
   &:after  {
     position: absolute;
     top: -4px; bottom: -4px;
@@ -375,5 +429,10 @@ export const BoxForm = styled.div`
     content: '';
     z-index: -1;
     border-radius: 10px 100px / 120 px;
+  
+  @media(max-width:460px){
+    margin: 0;
+    padding: 0;
+  }
 `;
   
