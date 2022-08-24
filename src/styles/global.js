@@ -59,7 +59,7 @@ export const Logo = styled.div`
     @media (max-width: 768px) {
       width: ${px2vw(1400)};
       min-height: ${px2vw(1100)};
-  }
+    }
 
     @media (min-width: 1024px) {
         width: ${px2vw(350)};
@@ -73,19 +73,18 @@ export const Box = styled.div`
   background-color: ${props => props.bgColor};
   margin-top:10%;
 
-
   @media (min-width: 768px) {
     width: ${px2vw(320, 768)};
   }
 
   @media (min-width: 1024px) {
     width: ${px2vw(500)};
-    
+  }
+
+  @media(max-width:1400px){
+    width: ${px2vw(600)};
   }
 `;
-
-
-
 
 export const BoxTitle = styled.div`
   color: #fff;
@@ -94,13 +93,17 @@ export const BoxTitle = styled.div`
   line-height:1.2;
   text-align: center;
   font-weight:600;
-  
-
 
   @media(max-width:400px){
     font-size: 2.5rem;
     margin-top: 10px;
   }
+
+  @media(min-width:1024px){
+    font-size: 2rem;
+    margin-top: 10px;
+  }
+
 `;
 
 export const BoxSubTitle = styled.div`
@@ -112,24 +115,25 @@ export const BoxSubTitle = styled.div`
   font-weight:600;
   
 
-  @media (max-width: 1024px) {
-    font-size: 2.7rem;
+  @media (min-width: 1000px) and (max-width: 1400px) { {
+    font-size: 2.2rem;
   }
   @media(max-width:400px){
     font-size: 2em;
     margin-top: 10px;
   }
+  
 `;
 
 export const Note = styled.p`
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   font-family: Inter,sans-serif;
   color: #f3d81bf7;
   font-weight:600;
   line-height:1.2;
 
-  @media (min-width: 1024px) {
-    font-size: 1rem;
+  @media (min-width: 1000px) and (max-width: 1400px) { {
+    font-size: 0.9rem;
   }
   @media(max-width:460px){
     font-size: 1rem;
@@ -138,9 +142,15 @@ export const Note = styled.p`
 `;
 
 export const Ol = styled.ol`
-  margin-left:25%; 
-  margin-right:25%; 
+  margin-left:20%; 
+  margin-right:20%; 
   padding-right:0;
+
+  @media (min-width: 1000px) and (max-width: 1400px) { {
+    margin-left:15%; 
+    margin-right:15%; 
+    padding-right:0; 
+  }
 
   @media(max-width:460px){
     margin-left:5%; 
@@ -150,15 +160,15 @@ export const Ol = styled.ol`
 `;
 
 export const BoxDetailSales = styled.li`
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-family: Inter,sans-serif;
   color: #f3d81bf7;
   font-weight:600;
   line-height:1.2;
   
 
-  @media (min-width: 1024px) {
-    font-size: 1rem;
+  @media (min-width: 1000px) and (max-width: 1400px) { {
+    font-size: 0.9rem;
   }
   @media(max-width:460px){
     font-size: 0.9rem;
@@ -177,9 +187,10 @@ export const BoxText = styled.div`
   transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
   transform-style: preserve-3d;
 
-  @media (min-width: 1024px) {
-    font-size: 1.2rem;
+  @media (min-width: 1000px) and (max-width: 1400px) { {
+    font-size: 1rem;
   }
+  
   @media(max-width:460px){
     font-size: 1rem;
     padding: 5%;
@@ -216,7 +227,7 @@ export const BoxExchange = styled.div`
 export const BoxTitleSwap = styled.h3`
   color: #fff;
   text-align:center;
-  font-size: 3.2rem;
+  font-size: 2.5rem;
   font-family: Inter,sans-serif;
   line-height:1.2;
   font-weight:600;
@@ -224,8 +235,8 @@ export const BoxTitleSwap = styled.h3`
   padding: 1.5%;
   
   
-  @media (min-width: 1024px) {
-    font-size: 2.7rem;
+  @media (min-width: 1000px) and (max-width: 1400px) {
+    font-size: 2.4rem;
   }
 
   @media (max-width: 460px) {
@@ -236,7 +247,7 @@ export const BoxTitleSwap = styled.h3`
 export const TokensToClaim = styled.h3`
   color: #fff;
   text-align:center;
-  font-size: 2.2rem;
+  font-size: 1.5rem;
   font-family: Inter,sans-serif;
   line-height:1.2;
   font-weight:600;
@@ -244,12 +255,12 @@ export const TokensToClaim = styled.h3`
   padding: 1.5%;
   margin-top: 5%;
 
-  @media (min-width: 1024px) {
-    font-size: 1.7rem;
+  @media (min-width: 1000px) and (max-width: 1400px) {
+    font-size: 1.3rem;
   }
 
   @media (max-width: 460px) {
-    font-size: 1.2rem; 
+    font-size: 1rem; 
   }
 `;
 
@@ -278,6 +289,7 @@ export const ConnectButton = styled.button`
   font-size: 1rem;
   font-weight: 700;
   text-align: center;
+
   @media (max-width: 460px) {
     width:43%;
     display: center;
@@ -316,7 +328,6 @@ export const ViewWhitePapper = styled.a`
 `;
 
 export const DivSecondaryHero = styled.div`
-
     padding: 0.625rem 1rem;
     justify-content: center;
     align-items: center;

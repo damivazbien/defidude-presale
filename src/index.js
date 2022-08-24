@@ -193,7 +193,7 @@ const App = () => {
     },[walletAddress, amountOfTokenForClaim, allowance]);
 
     return (
-            <Container fuid="md">
+            <Container>
                     <Row>
                         <Col></Col>
                         <Col md={2}>
@@ -205,8 +205,6 @@ const App = () => {
                             }
                         </Col>
                     </Row>
-                    <br></br>
-                    <br></br>
                     <br></br>
                     <Row>
                         <Col md={5}>
