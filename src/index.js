@@ -35,8 +35,8 @@ const boxData =
 
 const boxDataSales = {
     title: "HOW TO PARTICIPATE",
-    position: ["Enter swap amount (0.0002 ETH = 100 DUDE)","Click swap","Click claim to claim BnB/DUDE LP tokens"],
-    note: "Participation in this Liquid Generation Event gives a +170% bonus to your starting amount. E.g. ETH swapped = 0.0002 ETH & 100 DUDE tokens LP tokens"
+    position: ["Enter swap amount to receive synthetic LP","Swap synthetic LP for real LP"],
+    note: ["All contributions will receive a 170% bonus; meaning if you contribute $1000 you will receive $1700 worth of LP tokens to be redeem.","This liquidity can be withdrawn in full after 90 days without occurring any tax","This ensures the project starts with a healthy liquidity."]
 
 } 
 
@@ -193,7 +193,7 @@ const App = () => {
     },[walletAddress, amountOfTokenForClaim, allowance]);
 
     return (
-            <Container>
+            <Container fuid>
                     <Row>
                         <Col></Col>
                         <Col md={2}>
@@ -208,6 +208,7 @@ const App = () => {
                     <br></br>
                     <Row>
                         <Col md={5}>
+                            <Container>
                             <Box>
                                 <Row>
                                     <BoxTitle>{boxData.title}</BoxTitle>
@@ -219,33 +220,36 @@ const App = () => {
                                     <BoxText>{boxData.text}</BoxText>
                                 </Row>
                                 <Row>
-                                    <Col></Col>
-                                    <Col><Logo></Logo></Col>
-                                    <Col></Col>
+                                    <Logo></Logo>
                                 </Row>
                                 <br></br>
                                 <br></br>
                                 <Row>
-                                    <Col></Col>
-                                    <Col md={5}>
-                                        <ViewWhitePapper href="https://assets.website-files.com/624b9f6b660c8a01c2fbd34d/6273a5844c0c09798d2573fb_Defi_Dude_DAO_WP_Latest.pdf" target="_blank">
-                                            <DivSecondaryHero>
-                                                <DivSecondaryText>
-                                                    View Our White Papper
-                                                </DivSecondaryText>
-                                            </DivSecondaryHero> 
-                                        </ViewWhitePapper>
+                                    <Col md={6}>
+                                        <div  style={{"textAlign":"center"}}>
+                                            <ViewWhitePapper href="https://assets.website-files.com/624b9f6b660c8a01c2fbd34d/6273a5844c0c09798d2573fb_Defi_Dude_DAO_WP_Latest.pdf" target="_blank">
+                                                <DivSecondaryHero>
+                                                    <DivSecondaryText>
+                                                        View Our White Papper
+                                                    </DivSecondaryText>
+                                                </DivSecondaryHero> 
+                                            </ViewWhitePapper>
+                                        </div>
                                     </Col>
-                                    <Col md={5}>
-                                        <Subtitle>Powered by</Subtitle>
-                                        <BinanceLogo  src="https://assets.website-files.com/624b9f6b660c8a01c2fbd34d/629edfa9441bbb8cebfafcaa_binance-smart-chain-logo-802A74A1DB-seeklogo.com.png"></BinanceLogo>
+                                    <Col md={6}>
+                                        <div  style={{"textAlign":"center"}}>
+                                            <Subtitle>Powered by</Subtitle>
+                                            <BinanceLogo  src="https://assets.website-files.com/624b9f6b660c8a01c2fbd34d/629edfa9441bbb8cebfafcaa_binance-smart-chain-logo-802A74A1DB-seeklogo.com.png"></BinanceLogo>
+                                        </div>
                                     </Col>
-                                    <Col></Col>
+                                    
                                 </Row>
                             </Box>
+                            </Container>
                         </Col>
                         <Col md={2}></Col>
                         <Col md={5}>
+                            <Container>
                             <Row>
                                 <Box>
                                     <Row>
@@ -361,8 +365,14 @@ const App = () => {
                                     </BoxForm>
                             </Row>
                             <Row>
-                                <Note>{boxDataSales.note}</Note>
+                                {
+                                    boxDataSales.note.map((note) =>(
+                                        <Note>{note}</Note>        
+                                    ))
+                                }
+                                
                             </Row>
+                            </Container>
                         </Col>
                     </Row>
             </Container>

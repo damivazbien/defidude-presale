@@ -65,6 +65,11 @@ export const Logo = styled.div`
         width: ${px2vw(350)};
         min-height: ${px2vw(300)};
     }
+
+    @media (max-width: 400px) {
+      width: ${px2vw(1200)};
+      min-height: ${px2vw(950)};
+  }
 `;
 
 export const Box = styled.div`
@@ -73,17 +78,7 @@ export const Box = styled.div`
   background-color: ${props => props.bgColor};
   margin-top:10%;
 
-  @media (min-width: 768px) {
-    width: ${px2vw(320, 768)};
-  }
-
-  @media (min-width: 1024px) {
-    width: ${px2vw(500)};
-  }
-
-  @media(max-width:1400px){
-    width: ${px2vw(600)};
-  }
+  
 `;
 
 export const BoxTitle = styled.div`
@@ -94,7 +89,7 @@ export const BoxTitle = styled.div`
   text-align: center;
   font-weight:600;
 
-  @media(max-width:400px){
+  @media(max-width:500px){
     font-size: 2.5rem;
     margin-top: 10px;
   }
@@ -115,9 +110,14 @@ export const BoxSubTitle = styled.div`
   font-weight:600;
   
 
-  @media (min-width: 1000px) and (max-width: 1400px) { {
+  @media (min-width: 1000px) and (max-width: 1400px) {
     font-size: 2.2rem;
   }
+
+  @media  (min-width: 461px) and (max-width: 980px) { 
+    font-size: 2rem;
+  }
+
   @media(max-width:400px){
     font-size: 2em;
     margin-top: 10px;
@@ -131,12 +131,14 @@ export const Note = styled.p`
   color: #f3d81bf7;
   font-weight:600;
   line-height:1.2;
+  margin-top: 5%;
 
-  @media (min-width: 1000px) and (max-width: 1400px) { {
+  @media (min-width: 1000px) and (max-width: 1400px) { 
     font-size: 0.9rem;
   }
+  
   @media(max-width:460px){
-    font-size: 1rem;
+    font-size: 0.8rem;
     margin-top: 10px;
   }
 `;
@@ -146,10 +148,16 @@ export const Ol = styled.ol`
   margin-right:20%; 
   padding-right:0;
 
-  @media (min-width: 1000px) and (max-width: 1400px) { {
+  @media (min-width: 1000px) and (max-width: 1400px) { 
     margin-left:15%; 
     margin-right:15%; 
     padding-right:0; 
+  }
+  
+  @media  (min-width: 461px) and (max-width: 980px) { 
+    margin-left:7%; 
+    margin-right:7%; 
+    padding-right:0;
   }
 
   @media(max-width:460px){
@@ -167,19 +175,19 @@ export const BoxDetailSales = styled.li`
   line-height:1.2;
   
 
-  @media (min-width: 1000px) and (max-width: 1400px) { {
+  @media (min-width: 1000px) and (max-width: 1400px) { 
     font-size: 0.9rem;
   }
   @media(max-width:460px){
-    font-size: 0.9rem;
-    margin-top: 10px;
+    font-size: 0.8rem;
+    margin-top:10px;
   }
+  
 `;
 
 export const BoxText = styled.div`
   margin-top: ${px2vw(10)};
   color: hsla(0,0%,100%,.75);
-  margin-left:7%;
   font-size: 1.2rem;
   line-height:1.4;
   letter-spacing: 1.5px;
@@ -187,12 +195,16 @@ export const BoxText = styled.div`
   transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
   transform-style: preserve-3d;
 
-  @media (min-width: 1000px) and (max-width: 1400px) { {
+  @media (min-width: 1000px) and (max-width: 1400px) { 
     font-size: 1rem;
+  }
+
+  @media  (min-width: 461px) and (max-width: 980px) { 
+    font-size: 1.2rem;
   }
   
   @media(max-width:460px){
-    font-size: 1rem;
+    font-size: 1.1rem;
     padding: 5%;
     margin-left:0;
   }
@@ -239,8 +251,8 @@ export const BoxTitleSwap = styled.h3`
     font-size: 2.4rem;
   }
 
-  @media (max-width: 460px) {
-    font-size: 2rem; 
+  @media (max-width: 500px) {
+    font-size: 1.8rem; 
   }
 `;
 
@@ -259,7 +271,7 @@ export const TokensToClaim = styled.h3`
     font-size: 1.3rem;
   }
 
-  @media (max-width: 460px) {
+  @media (max-width: 500px) {
     font-size: 1rem; 
   }
 `;
@@ -290,8 +302,13 @@ export const ConnectButton = styled.button`
   font-weight: 700;
   text-align: center;
 
-  @media (max-width: 460px) {
-    width:43%;
+  @media (min-width: 1000px) and (max-width: 1400px) {
+    font-size: 0.7rem;
+  }
+
+  @media (max-width: 800px) {
+    width:40%;
+    height:7%;
     display: center;
     margin-bottom: 10px;
   }
@@ -319,10 +336,14 @@ export const ViewWhitePapper = styled.a`
       text-decoration: underline;
     }
 
-    @media (max-width: 460px) {
+    @media  (min-width: 461px) and (max-width: 980px) { 
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 500px) {
       margin-top: 10px;
       margin-bottom: 10px;
-      margin-left:15%;
+      
     }
 
 `;
@@ -350,10 +371,10 @@ export const Subtitle = styled.div`
   font-weight: 800;
 
   
-  @media (max-width: 460px) {
+  @media (max-width: 500px) {
     margin-top: 10px;
     margin-bottom: 10px;
-    margin-left:15%;
+    
   }
 `;
 
@@ -371,13 +392,13 @@ export const BinanceLogo = styled.img`
     @media (max-width: 460px) {
       margin-top: 10px;
       margin-bottom: 10px;
-      margin-left:15%;
+      
     }
 `;
 
 export const ButtonSwap = styled.button`
-    margin-top: 2%;
-    padding: 2px;
+    margin-top: 1.8%;
+    padding: 1.6px;
     border-radius: 30px;
     background-image: linear-gradient(135deg,#00fc9a,#29debd 34%,#14c4dc 67%,#ab69ff);
     transition: backgroud-color 1s,.2s;
@@ -386,7 +407,7 @@ export const ButtonSwap = styled.button`
     font-size: inherit;
     background-color: transparent;
     text-decoration: inherit;
-    width: 30%;
+    width: 35%;
     
     
     
@@ -412,7 +433,7 @@ export const LabelAmount = styled.label`
     text-align: center;
     
 
-    @media(max-width:460px){
+    @media(max-width:500px){
       font-size: 1.5rem; 
     }
 `;
@@ -443,7 +464,7 @@ export const BoxForm = styled.div`
     z-index: -1;
     border-radius: 10px 100px / 120 px;
   
-  @media(max-width:460px){
+  @media(max-width:500px){
     margin: 0;
     padding: 0;
   }
