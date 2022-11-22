@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import {Subtitle, BoxForm, BoxSubTitle, BoxDetailSales, TokensToClaim,FormSwapToken, InputBuyToken, LabelAmount, ButtonSwap, BoxTitleSwap, BinanceLogo, 
-    ViewWhitePapper, DivSecondaryHero, DivSecondaryText,ConnectButton, Box, BoxText, BoxTitle, Logo, Note, Ol}  from "./styles/global";
+    ViewWhitePapper, DivSecondaryHero, DivSecondaryText, Box, BoxText, BoxTitle, Logo, Note, Ol}  from "./styles/global";
 import web3 from './utils/web3';
 import contract from './contract/contract';
 import tokenContract from './contract/token';
@@ -15,10 +15,30 @@ import { InjectedConnector } from '@web3-react/injected-connector';
 import party from "party-js";
 import CountDown from "./components/countdown";
 import { SpinnerInfinity } from 'spinners-react';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { chains, client } from './connectors';
+import { createRoot } from 'react-dom/client';
+import '@rainbow-me/rainbowkit/dist/index.css';
+// import {
+//     RainbowKitProvider,
+//     DisclaimerComponent,
+//   } from '@rainbow-me/rainbowkit';
+import { useAccount } from "wagmi";
+
+
+import { getDefaultWallets, RainbowKitProvider, darkTheme} from '@rainbow-me/rainbowkit';
+import {
+  chain,
+  configureChains,
+  createClient,
+  WagmiConfig,
+} from 'wagmi';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { publicProvider } from 'wagmi/providers/public';
 
 
 const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42],
+  supportedChainIds: [ 56],
 })
 
 const lorem =
@@ -40,14 +60,19 @@ const boxDataSales = {
 
 } 
 
-function getLibrary(provider) {
-    return new Web3(provider)
-  }
 
-
+  
+  const Disclaimer = ({ Text, Link }) => (
+    <Text>
+      By connecting your wallet, you agree to the{' '}
+      <Link href="https://assets.website-files.com/624b9f6b660c8a01c2fbd34d/6273a5844c0c09798d2573fb_Defi_Dude_DAO_WP_Latest.pdf">Terms of Service</Link> All contributions will receive a 170% bonus; meaning if you contribute $1000 you will receive $1700 worth of LP tokens to be redeem.{' '}
+      This liquidity can be withdrawn in full after 90 days without occurring any tax This ensures the project starts with a healthy liquidity.
+     </Text>
+  );
 
 const App = () => {
     const [walletAddress, setWalletAddress] = useState(null);
+    const { address, isConnected } = useAccount();
     const [loading, setLoading] = useState(false);
     const [tokenToClaim, setTokenToClaim] = useState(0);
     const [allowance, setAllowance] = useState(null);
@@ -56,33 +81,19 @@ const App = () => {
     const [timeOut, setTimeOut] = useState(0);
     const { active, account, library, connector, activate, deactivate } = useWeb3React();
     const buttonRef = useRef(null);
-    
-    
-    const connect =  async () => {
-        await activate(injected)
-        localStorage.setItem('isWalletConnected', true)
-    }
-
-    const disconnectWallet = async() => {
-        deactivate();
-        localStorage.setItem("isWalletConnected", false);
-        setWalletAddress(null);
-        setTokenToClaim(null);
-        setAllowance(null);
-        
-    }
+     
 
     const approveToken = async() =>{
         setLoading(true);
         buttonRef.current.disabled = true;
         try{
             //pass the amount of tokens of contract
-            await tokenContract.methods.approve("0x34dCaCdBBe6f0DB178B29c47d06494F0DC8250ad", "500000000000000000000000000").send({
-                from: walletAddress
+            await tokenContract.methods.approve("0x63b7fca6147e293a8e5d91ed59931614dc961362", "500000000000000000000000000").send({
+                from: address
             });
             setLoading(false);
             buttonRef.current.disabled = false;
-            setAllowance(await tokenContract.methods.allowance(walletAddress, "0x34dCaCdBBe6f0DB178B29c47d06494F0DC8250ad").call());  
+            setAllowance(await tokenContract.methods.allowance(address, "0x63b7fca6147e293a8e5d91ed59931614dc961362").call());  
 
         }catch(err){
             setLoading(false);
@@ -95,15 +106,16 @@ const App = () => {
         setLoading(true);
         buttonRef.current.disabled = true;
         try{
-            await contract.methods.buyTokens(walletAddress).send({
-                from: walletAddress,
+            await contract.methods.buyTokens(address).send({
+                from: address,
                 value: web3.utils.toWei(value, 'ether'),
               });
       
-              setAmountOfTokenForClaim(await tokenContract.methods.balanceOf(walletAddress).call());  
+              setAmountOfTokenForClaim(await tokenContract.methods.balanceOf(address).call());  
               setLoading(false);
               buttonRef.current.disabled = false;
         }catch(err){
+            console.log(err);
             setLoading(false);
             buttonRef.current.disabled = false;
         }
@@ -116,13 +128,13 @@ const App = () => {
         try{
             //pass the amount of tokens of contract
             await swapToken.methods.swapTokens(claimToken).send({
-                from: walletAddress
+                from: address
             });
             
             party.confetti(document.body,{
                 count: party.variation.range(100, 200),
             });
-            setAmountOfTokenForClaim(await tokenContract.methods.balanceOf(walletAddress).call());
+            setAmountOfTokenForClaim(await tokenContract.methods.balanceOf(address).call());
             setLoading(false);
             buttonRef.current.disabled = false;
       }catch(err){
@@ -167,18 +179,18 @@ const App = () => {
             setTokenToClaim(await swapToken.methods.calculateTokens(amountOfTokenForClaim).call());
         }
         const tokensToClaim = async () => {
-            if(walletAddress === null)
+            if(address === null)
             {
                 return 0;
             }
             //pass the amount of tokens of contract
-            setAmountOfTokenForClaim(await tokenContract.methods.balanceOf(walletAddress).call());  
+            setAmountOfTokenForClaim(await tokenContract.methods.balanceOf(address).call());  
         }
         const haveAllowance = async () => {
-            setAllowance(await tokenContract.methods.allowance(walletAddress, "0x34dCaCdBBe6f0DB178B29c47d06494F0DC8250ad").call());  
+            setAllowance(await tokenContract.methods.allowance(address, "0x63b7fca6147e293a8e5d91ed59931614dc961362").call());  
         }
         
-        if(walletAddress !== null)
+        if(address !== null)
         {
             tokensToClaim();
             haveAllowance();
@@ -190,22 +202,24 @@ const App = () => {
             setAllowance(null);
             setTokenToClaim(null);
         }
-    },[walletAddress, amountOfTokenForClaim, allowance]);
+    },[address, amountOfTokenForClaim, allowance]);
 
     return (
             <Container fuid>
                     <Row>
-                        <Col></Col>
-                        <Col md={2}>
+                        <Col md={4}></Col>
+                        <Col md={4}></Col>
+                        <Col md={4}></Col>
+                        <Col md={3}>
+                            <br></br>
                             {
                                 walletAddress === null ? 
-                                    <ConnectButton onClick={ connect }>Connect wallet</ConnectButton>
+                                    <ConnectButton />
                                 : 
-                                    <ConnectButton onClick={ disconnectWallet }>Logout</ConnectButton>         
+                                <div></div>    
                             }
                         </Col>
                     </Row>
-                    <br></br>
                     <Row>
                         <Col md={5}>
                             <Container>
@@ -222,8 +236,6 @@ const App = () => {
                                 <Row>
                                     <Logo></Logo>
                                 </Row>
-                                <br></br>
-                                <br></br>
                                 <Row>
                                     <Col md={6}>
                                         <div  style={{"textAlign":"center"}}>
@@ -364,14 +376,13 @@ const App = () => {
                                         </Row>
                                     </BoxForm>
                             </Row>
-                            <Row>
+                            {/* <Row>
                                 {
                                     boxDataSales.note.map((note) =>(
                                         <Note>{note}</Note>        
                                     ))
                                 }
-                                
-                            </Row>
+                            </Row> */}
                             </Container>
                         </Col>
                     </Row>
@@ -379,9 +390,20 @@ const App = () => {
     )
 }
 
-ReactDOM.render(
-    <Web3ReactProvider getLibrary={getLibrary}>
-        <App/>
-    </Web3ReactProvider>
 
-, document.querySelector("#root"))
+const root = createRoot(document.querySelector("#root"));
+root.render(<WagmiConfig client={client}>
+    <RainbowKitProvider 
+    appInfo={{
+        appName: 'RainbowKit Demo',
+        disclaimer: Disclaimer,
+      }}
+    theme={darkTheme({
+        modalBackground:'#1d2d45',
+        modalBackdrop:'#1d2d45'
+    })} chains={chains}>
+      {/* <Web3ReactProvider getLibrary={getLibrary}> */}
+          <App/>
+      {/* </Web3ReactProvider> */}
+  </RainbowKitProvider>
+  </WagmiConfig>);

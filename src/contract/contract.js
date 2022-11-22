@@ -1,6 +1,7 @@
 import web3 from '../utils/web3';
 
-const CONTRACT_ADDRESS = '0x3eCa2e0BD73a830CB2Aa45f9e1B2fc988A0b36D5';
+//LGE contract
+const CONTRACT_ADDRESS = '0xC427c4F833A398d6b0904650C798590ff8711360';
 
 const CONTRACT_ABI = [
    {
@@ -428,6 +429,6 @@ const CONTRACT_ABI = [
       "stateMutability":"view",
       "type":"function"
    }
-]
+];
 
  export default new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);

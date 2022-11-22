@@ -37,7 +37,7 @@ export default function CountDown({ toend }) {
         }, 1000);
         return () => 
         {   
-            if(timetoend==0)
+            if(timetoend===0)
             {
                 clearInterval(interval);
             }
