@@ -1,16 +1,16 @@
 import React, {useEffect, useState, useRef} from "react";
-import ReactDOM  from "react-dom";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import {Subtitle, BoxForm, BoxSubTitle, BoxDetailSales, TokensToClaim,FormSwapToken, InputBuyToken, LabelAmount, ButtonSwap, BoxTitleSwap, BinanceLogo, 
-    ViewWhitePapper, DivSecondaryHero, DivSecondaryText, Box, BoxText, BoxTitle, Logo, Note, Ol}  from "./styles/global";
+    ViewWhitePapper, DivSecondaryHero, DivSecondaryText, Box, BoxText, BoxTitle, Logo, Note, Ol, LabelReceive,
+    ImgBNB,
+    Label,
+    DivInline}  from "./styles/global";
 import web3 from './utils/web3';
 import contract from './contract/contract';
 import tokenContract from './contract/token';
 import swapToken from './contract/swapToken';
-import Web3 from 'web3';
-import { useWeb3React, Web3ReactProvider } from "@web3-react/core";
 import { InjectedConnector } from '@web3-react/injected-connector';
 import party from "party-js";
 import CountDown from "./components/countdown";
@@ -26,20 +26,10 @@ import '@rainbow-me/rainbowkit/dist/index.css';
 import { useAccount } from "wagmi";
 
 
-import { getDefaultWallets, RainbowKitProvider, darkTheme} from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider, darkTheme} from '@rainbow-me/rainbowkit';
 import {
-  chain,
-  configureChains,
-  createClient,
   WagmiConfig,
 } from 'wagmi';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { publicProvider } from 'wagmi/providers/public';
-
-
-const injected = new InjectedConnector({
-  supportedChainIds: [ 56],
-})
 
 const lorem =
   "Our automated Trading Bots do the heavy lifting for you. Simply hold $DUDE token to earn periodic rewards.";
@@ -55,7 +45,7 @@ const boxData =
 
 const boxDataSales = {
     title: "HOW TO PARTICIPATE",
-    position: ["Enter swap amount to receive synthetic LP","Swap synthetic LP for real LP"],
+    position: ["Enter swap amount to receive synthetic LP","Swap synthetic LP for real LP", "Swap synthetic LP will be available xxx date"],
     note: ["All contributions will receive a 170% bonus; meaning if you contribute $1000 you will receive $1700 worth of LP tokens to be redeem.","This liquidity can be withdrawn in full after 90 days without occurring any tax","This ensures the project starts with a healthy liquidity."]
 
 } 
@@ -71,16 +61,17 @@ const boxDataSales = {
   );
 
 const App = () => {
-    const [walletAddress, setWalletAddress] = useState(null);
     const { address, isConnected } = useAccount();
     const [loading, setLoading] = useState(false);
+    const [amountBought, setAmountBought] = useState(0);
     const [tokenToClaim, setTokenToClaim] = useState(0);
     const [allowance, setAllowance] = useState(null);
     const [amountOfTokenForClaim, setAmountOfTokenForClaim] = useState(0);
     const [value, setValue] = useState('');
+    const [receive, setReceive] = useState('');
     const [timeOut, setTimeOut] = useState(0);
-    const { active, account, library, connector, activate, deactivate } = useWeb3React();
     const buttonRef = useRef(null);
+    
      
 
     const approveToken = async() =>{
@@ -146,28 +137,31 @@ const App = () => {
     const handleChange = event => {
         const result = event.target.value.replace(/\+|-/g,'');
         setValue(result);
+        //amount of lp will receive ->
+        //how many LP tokens you would receive ie 1 BNB = 150 LP tokens 
+        setReceive(result*150);
     }
 
-    useEffect(() => {
-        if(active){
-            setWalletAddress(account);
-        }
-    }, [active]);
+    // useEffect(() => {
+    //         setWalletAddress(address);
+        
+    // }, [active]);
 
     useEffect(() => {
         const connectWalletOnPageLoad = async () => {
           if (localStorage?.getItem('isWalletConnected') === 'true') {
             try {
-              await activate(injected)
-              localStorage.setItem('isWalletConnected', true)
-              setWalletAddress(account);
+              if(isConnected)
+                localStorage.setItem('isWalletConnected', true);
+              else
+                localStorage.setItem('isWalletConnected', false);
+
             } catch (ex) {
               console.log(ex)
             }
           }
         }
         const getTimeOut = async () => {
-            console.log(await contract.methods.closingTime().call());
             setTimeOut(await contract.methods.closingTime().call());
         }
         connectWalletOnPageLoad();
@@ -175,11 +169,15 @@ const App = () => {
       }, [])
 
     useEffect(() => {
+        const amount = async() => {
+            setAmountBought(await contract.methods.getContribution(address).call());
+        }
+
         const amountTokenSLP = async() => {
             setTokenToClaim(await swapToken.methods.calculateTokens(amountOfTokenForClaim).call());
         }
         const tokensToClaim = async () => {
-            if(address === null)
+            if(!address)
             {
                 return 0;
             }
@@ -187,37 +185,34 @@ const App = () => {
             setAmountOfTokenForClaim(await tokenContract.methods.balanceOf(address).call());  
         }
         const haveAllowance = async () => {
-            setAllowance(await tokenContract.methods.allowance(address, "0x63b7fca6147e293a8e5d91ed59931614dc961362").call());  
+            if(address)
+                setAllowance(await tokenContract.methods.allowance(address, "0x63b7fca6147e293a8e5d91ed59931614dc961362").call());  
         }
         
-        if(address !== null)
+        if(address)
         {
             tokensToClaim();
             haveAllowance();
             amountTokenSLP();
+            amount();
         }
         else
         {
-            setWalletAddress(null);
             setAllowance(null);
             setTokenToClaim(null);
+            setAmountBought(null);
         }
     },[address, amountOfTokenForClaim, allowance]);
 
     return (
-            <Container fuid>
+            <Container>
                     <Row>
                         <Col md={4}></Col>
                         <Col md={4}></Col>
                         <Col md={4}></Col>
                         <Col md={3}>
                             <br></br>
-                            {
-                                walletAddress === null ? 
-                                    <ConnectButton />
-                                : 
-                                <div></div>    
-                            }
+                            <ConnectButton />
                         </Col>
                     </Row>
                     <Row>
@@ -297,10 +292,23 @@ const App = () => {
                                             <Row>
                                                 <FormSwapToken onSubmit={submitForm}>
                                                             <Row>
-                                                                <LabelAmount>Number</LabelAmount>
+                                                                <LabelAmount>Amount</LabelAmount>
                                                             </Row>
                                                             <Row>
-                                                                <InputBuyToken value={value} type='number' onChange={handleChange} ></InputBuyToken>
+                                                                <DivInline>
+                                                                    <ImgBNB src="https://storage.googleapis.com/zapper-fi-assets/tokens/binance-smart-chain/0x0000000000000000000000000000000000000000.png"></ImgBNB>
+                                                                    <Label>BNB</Label>
+                                                                    <InputBuyToken value={value} type='number' onChange={handleChange}  ></InputBuyToken>
+                                                                </DivInline>
+                                                            </Row>
+                                                            <Row>
+                                                            {
+                                                                    (value>0)?
+                                                                        <DivInline>
+                                                                            <LabelReceive> For {receive.toFixed(4)} LP tokens</LabelReceive>
+                                                                        </DivInline>
+                                                                    :<></>
+                                                            }
                                                             </Row>
                                                             <Row>
                                                                 <div style={{"textAlign":"center"}}>
@@ -324,9 +332,20 @@ const App = () => {
                                         
                                         </Row>
                                         <Row>
+                                        {
+                                                amountBought > 0 ?
+                                                <Row>
+                                                    <TokensToClaim>You have {web3.utils.fromWei(amountBought, 'ether')} purchased LP tokens</TokensToClaim>
+                                                </Row>
+                                                :
+                                                <></>
+                                                    
+                                            }
+                                        </Row>
+                                        {/* <Row>
                                         
                                             {
-                                                allowance == 0 && amountOfTokenForClaim > 0 ?
+                                                amountBought == 0 && amountOfTokenForClaim > 0 ?
                                                         <Row>
                                                             <div  style={{"textAlign":"center"}}>
                                                                 <ButtonSwap onClick={approveToken} ref={buttonRef}>
@@ -373,7 +392,7 @@ const App = () => {
                                                     <Row><Col></Col></Row>
                                             }
                                         
-                                        </Row>
+                                        </Row> */}
                                     </BoxForm>
                             </Row>
                             {/* <Row>
@@ -392,18 +411,16 @@ const App = () => {
 
 
 const root = createRoot(document.querySelector("#root"));
+
+
 root.render(<WagmiConfig client={client}>
     <RainbowKitProvider 
     appInfo={{
         appName: 'RainbowKit Demo',
         disclaimer: Disclaimer,
       }}
-    theme={darkTheme({
-        modalBackground:'#1d2d45',
-        modalBackdrop:'#1d2d45'
-    })} chains={chains}>
-      {/* <Web3ReactProvider getLibrary={getLibrary}> */}
+     chains={chains}>
           <App/>
-      {/* </Web3ReactProvider> */}
+      
   </RainbowKitProvider>
   </WagmiConfig>);

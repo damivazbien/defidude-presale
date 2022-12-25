@@ -369,12 +369,10 @@ export const Subtitle = styled.div`
   margin-top:2%;  
   color: hsla(0,0%,100%,.75);
   font-weight: 800;
-
   
   @media (max-width: 500px) {
     margin-top: 10px;
     margin-bottom: 10px;
-    
   }
 `;
 
@@ -409,13 +407,10 @@ export const ButtonSwap = styled.button`
     text-decoration: inherit;
     width: 35%;
     
-    
-    
     &:-webkit-any-link {
       cursor: pointer;
       text-decoration: underline;
     }
-
   `;
 
 export const FormSwapToken = styled.form`
@@ -430,21 +425,56 @@ export const LabelAmount = styled.label`
     font-family: Inter,sans-serif;
     line-height:1.2;
     font-weight:600;
-    text-align: center;
-    
+    text-align: center; 
 
     @media(max-width:500px){
       font-size: 1.5rem; 
     }
 `;
 
+export const DivInline = styled.div`
+    display:flex;
+    flex-flow:row wrap;
+    align-items:center;
+    text-align: center;
+    margin-left:10%
+
+`;
+
+export const ImgBNB = styled.img`
+    display:flex;
+    flex-flow:row wrap;
+    width:50px;
+    height:50px;
+`;
+
+export const Label = styled.label`
+    margin: 5px 10px 5px 10px;
+`;
+
+export const LabelReceive = styled.label`
+  margin-left:23%;
+  @media(max-width:400px){
+    margin-left:15%;
+  }
+`;
+
+  export const input = styled.input`
+      vertical-align: middle;
+      margin: 5px 10px 5px 0;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+    
+`;
+
 export const InputBuyToken = styled.input`
-    margin-top: 5%;
-    margin-left:10%;
+    vertical-align: middle;
     border-radius: 30px;
     transition: backgroud-color 1s,.2s;
-    width:80%;
+    width:50%;
     text-align: center;
+    
 `;
 
 export const BoxForm = styled.div`
